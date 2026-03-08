@@ -5,168 +5,231 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GYM.LOG</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0F0F12; color: #F0EDE8; font-family: Georgia, serif; min-height: 100vh; }
-  .header { padding: 22px 16px 0; text-align: center; }
-  .header-label { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: #555; margin-bottom: 4px; }
-  .header-title { font-size: 21px; font-weight: 700; margin: 0; transition: all 0.3s; }
-  .day-selector { display: flex; gap: 6px; padding: 14px 16px 0; }
-  .day-btn { flex: 1; padding: 9px 4px; border-radius: 11px; border: none; cursor: pointer; background: #1C1C22; color: #666; font-family: Georgia, serif; font-size: 10px; font-weight: 700; transition: all 0.2s ease; }
-  .day-btn.active { color: #fff; }
-  .day-btn .icon { font-size: 14px; }
-  .day-btn .lbl { margin-top: 2px; }
-  .progress-wrap { padding: 11px 16px 0; }
-  .progress-meta { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 10px; color: #555; }
-  .progress-bar { height: 3px; background: #1C1C22; border-radius: 99px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 99px; transition: width 0.5s ease; }
-  .notes-banner { margin: 10px 16px 0; padding: 8px 12px; background: #1C1C22; border-radius: 8px; font-size: 11px; color: #666; line-height: 1.6; border-left-width: 3px; border-left-style: solid; }
-  .ex-list { padding: 10px 16px 28px; }
-  .ex-card { margin-bottom: 8px; border-radius: 13px; border-width: 1px; border-style: solid; border-color: #252528; background: #1C1C22; overflow: hidden; transition: all 0.25s; }
-  .ex-card.done { background: #141c13; }
-  .ex-row { display: flex; align-items: center; padding: 11px 13px; cursor: pointer; gap: 10px; }
-  .ex-num { width: 28px; height: 28px; border-radius: 8px; background: #252528; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #555; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
-  .ex-num.done { color: #fff; }
-  .ex-info { flex: 1; min-width: 0; }
-  .ex-name { font-size: 13px; font-weight: 600; color: #F0EDE8; line-height: 1.3; transition: all 0.2s; }
-  .ex-name.done { color: #555; text-decoration: line-through; }
-  .ex-sets { font-size: 10px; margin-top: 1px; font-family: monospace; }
-  .ex-arrow { color: #333; font-size: 10px; flex-shrink: 0; transition: transform 0.2s; }
-  .ex-arrow.open { transform: rotate(180deg); }
-  .ex-detail { padding: 0 13px 13px; border-top: 1px solid #222; display: none; }
-  .ex-detail.open { display: block; }
-  .muscle-tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 10px 0 9px; }
-  .muscle-tag { padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 600; border-width: 1px; border-style: solid; }
-  .tip-box { font-size: 11px; color: #AAA; line-height: 1.6; padding: 7px 9px; background: #141416; border-radius: 7px; margin-bottom: 10px; }
-  .ex-video { width: 100%; height: 180px; border-radius: 9px; margin-bottom: 10px; background: #000; object-fit: contain; }
-  .video-link { display: flex; align-items: center; gap: 6px; padding: 6px 9px; background: #12122A; border-radius: 7px; border-width: 1px; border-style: solid; text-decoration: none; font-size: 11px; font-weight: 600; margin-bottom: 10px; }
-  .series-label { font-size: 10px; color: #555; letter-spacing: 0.1em; margin-bottom: 7px; }
-  .series-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 6px; margin-bottom: 10px; }
-  .serie-box { background: #141416; border: 1px solid #2A2A2A; border-radius: 9px; padding: 8px 9px; transition: border 0.2s; }
-  .serie-num { font-size: 10px; color: #666; margin-bottom: 3px; }
-  .serie-reps { font-size: 12px; font-weight: 700; margin-bottom: 6px; font-family: monospace; }
-  .serie-input { width: 100%; padding: 5px 7px; border-radius: 5px; border: 1px solid #2A2A2A; background: #0F0F12; color: #F0EDE8; font-size: 11px; font-family: Georgia, serif; outline: none; }
-  .note-input { width: 100%; padding: 7px 9px; border-radius: 7px; border: 1px solid #2A2A2A; background: #141416; color: #F0EDE8; font-size: 11px; font-family: Georgia, serif; outline: none; resize: none; line-height: 1.5; transition: border 0.2s; }
-  .cardio-box { margin-top: 4px; padding: 10px 12px; background: #1C1C22; border-radius: 10px; border-left-width: 3px; border-left-style: solid; display: flex; gap: 8px; }
-  .cardio-label { font-size: 9px; letter-spacing: 0.15em; font-weight: 700; margin-bottom: 2px; }
-  .cardio-text { font-size: 11px; color: #777; line-height: 1.5; }
-  .completion { position: fixed; bottom: 20px; left: 16px; right: 16px; padding: 12px 20px; border-radius: 13px; text-align: center; font-size: 14px; font-weight: 700; color: #fff; z-index: 100; display: none; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0F0F12; color: #F0EDE8; font-family: Georgia, serif; min-height: 100vh; }
+
+.screen { display: none; padding-bottom: 80px; }
+.screen.active { display: block; }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 64px;
+  background: #0F0F12; border-top: 1px solid #1E1E24;
+  display: flex; z-index: 500;
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px; border: none; background: none; cursor: pointer;
+}
+.nav-icon { font-size: 20px; transition: transform 0.2s; }
+.nav-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: #444; font-family: Georgia, serif; transition: color 0.2s; }
+.nav-btn.active .nav-label { color: #F0EDE8; }
+.nav-btn.active .nav-icon { transform: scale(1.12); }
+.nav-divider { width: 1px; background: #1E1E24; margin: 14px 0; }
+
+/* WORKOUT */
+.header { padding: 22px 16px 0; text-align: center; }
+.header-label { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: #555; margin-bottom: 4px; }
+.header-title { font-size: 21px; font-weight: 700; }
+.day-selector { display: flex; gap: 6px; padding: 14px 16px 0; }
+.day-btn { flex: 1; padding: 9px 4px; border-radius: 11px; border: none; cursor: pointer; background: #1C1C22; color: #666; font-family: Georgia, serif; font-size: 10px; font-weight: 700; transition: all 0.2s; }
+.day-btn.active { color: #fff; }
+.day-btn .icon { font-size: 14px; }
+.day-btn .lbl { margin-top: 2px; }
+.progress-wrap { padding: 11px 16px 0; }
+.progress-meta { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 10px; color: #555; }
+.progress-bar { height: 3px; background: #1C1C22; border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+.notes-banner { margin: 10px 16px 0; padding: 8px 12px; background: #1C1C22; border-radius: 8px; font-size: 11px; color: #666; line-height: 1.6; border-left-width: 3px; border-left-style: solid; }
+.ex-list { padding: 10px 16px 16px; }
+.ex-card { margin-bottom: 8px; border-radius: 13px; border: 1px solid #252528; background: #1C1C22; overflow: hidden; transition: all 0.25s; }
+.ex-card.done { background: #141c13; }
+.ex-row { display: flex; align-items: center; padding: 11px 13px; cursor: pointer; gap: 10px; }
+.ex-num { width: 28px; height: 28px; border-radius: 8px; background: #252528; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #555; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+.ex-num.done { color: #fff; }
+.ex-info { flex: 1; min-width: 0; }
+.ex-name { font-size: 13px; font-weight: 600; color: #F0EDE8; line-height: 1.3; }
+.ex-name.done { color: #555; text-decoration: line-through; }
+.ex-sets { font-size: 10px; margin-top: 1px; font-family: monospace; }
+.ex-arrow { color: #333; font-size: 10px; flex-shrink: 0; transition: transform 0.2s; }
+.ex-arrow.open { transform: rotate(180deg); }
+.ex-detail { padding: 0 13px 13px; border-top: 1px solid #222; display: none; }
+.ex-detail.open { display: block; }
+.muscle-tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 10px 0 9px; }
+.muscle-tag { padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 600; border: 1px solid; }
+.tip-box { font-size: 11px; color: #AAA; line-height: 1.6; padding: 7px 9px; background: #141416; border-radius: 7px; margin-bottom: 10px; }
+.ex-video { width: 100%; height: 180px; border-radius: 9px; margin-bottom: 10px; background: #000; object-fit: contain; }
+.video-link { display: flex; align-items: center; gap: 6px; padding: 6px 9px; background: #12122A; border-radius: 7px; border: 1px solid; text-decoration: none; font-size: 11px; font-weight: 600; margin-bottom: 10px; }
+.series-label { font-size: 10px; color: #555; letter-spacing: 0.1em; margin-bottom: 7px; }
+.series-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 6px; margin-bottom: 10px; }
+.serie-box { background: #141416; border: 1px solid #2A2A2A; border-radius: 9px; padding: 8px 9px; transition: border 0.2s; }
+.serie-num { font-size: 10px; color: #666; margin-bottom: 3px; }
+.serie-reps { font-size: 12px; font-weight: 700; margin-bottom: 6px; font-family: monospace; }
+.serie-input { width: 100%; padding: 5px 7px; border-radius: 5px; border: 1px solid #2A2A2A; background: #0F0F12; color: #F0EDE8; font-size: 11px; font-family: Georgia, serif; outline: none; }
+.note-input { width: 100%; padding: 7px 9px; border-radius: 7px; border: 1px solid #2A2A2A; background: #141416; color: #F0EDE8; font-size: 11px; font-family: Georgia, serif; outline: none; resize: none; line-height: 1.5; transition: border 0.2s; }
+.cardio-box { margin-top: 4px; padding: 10px 12px; background: #1C1C22; border-radius: 10px; border-left: 3px solid; display: flex; gap: 8px; }
+.cardio-label { font-size: 9px; letter-spacing: 0.15em; font-weight: 700; margin-bottom: 2px; }
+.cardio-text { font-size: 11px; color: #777; line-height: 1.5; }
+.completion-bar { margin: 10px 0 0; padding: 12px 20px; border-radius: 13px; text-align: center; font-size: 14px; font-weight: 700; color: #fff; display: none; }
+
+/* STATS */
+.stats-header { padding: 28px 20px 4px; }
+.stats-title { font-size: 20px; font-weight: 700; }
+.stats-subtitle { font-size: 11px; color: #555; margin-top: 4px; }
+.stats-tabs { display: flex; gap: 6px; padding: 14px 20px 4px; }
+.stats-tab { flex: 1; padding: 8px 4px; border-radius: 10px; border: none; cursor: pointer; font-family: Georgia, serif; font-size: 11px; font-weight: 700; background: #1C1C22; color: #555; transition: all 0.2s; }
+.stats-tab.active { background: #252530; color: #F0EDE8; }
+.tab-pane { display: none; padding: 12px 20px 0; }
+.tab-pane.active { display: block; }
+
+/* CALENDAR */
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.cal-nav-btn { background: #1C1C22; border: none; color: #888; width: 32px; height: 32px; border-radius: 9px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+.cal-month { font-size: 14px; font-weight: 700; }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 5px; }
+.cal-dow { font-size: 9px; color: #444; text-align: center; padding-bottom: 8px; font-weight: 700; letter-spacing: 0.05em; }
+.cal-day { aspect-ratio: 1; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #2A2A2A; background: #171720; position: relative; }
+.cal-day.today { color: #666; border: 1px solid #2A2A2A; }
+.cal-day.trained { color: #fff; }
+.cal-day.empty { background: transparent; }
+
+/* SESSIONS */
+.session-card { background: #1C1C22; border-radius: 12px; padding: 12px 14px; margin-bottom: 9px; border-left: 3px solid; }
+.session-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 9px; }
+.session-day { font-size: 12px; font-weight: 700; }
+.session-date { font-size: 10px; color: #666; text-align: right; line-height: 1.5; }
+.session-ex { font-size: 11px; display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #1E1E24; }
+.session-ex:last-child { border-bottom: none; }
+.session-ex-name { color: #888; }
+.session-ex-w { font-family: monospace; font-weight: 700; font-size: 11px; }
+.no-data { text-align: center; padding: 50px 0; color: #3A3A3A; font-size: 13px; line-height: 2; }
+
+/* CHART */
+.chart-selector select { width: 100%; padding: 9px 12px; background: #1C1C22; border: 1px solid #252528; border-radius: 10px; color: #F0EDE8; font-family: Georgia, serif; font-size: 12px; outline: none; cursor: pointer; margin-bottom: 12px; }
+.chart-card { background: #1C1C22; border-radius: 13px; padding: 14px 12px 10px; }
+.chart-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.chart-lbl { font-size: 9px; color: #555; letter-spacing: 0.12em; }
+.chart-trend { font-size: 12px; font-weight: 700; }
+.chart-svg { width: 100%; height: 170px; }
+.c-label { font-size: 9px; fill: #444; font-family: Georgia, serif; }
+.c-vallabel { font-size: 9px; font-family: Georgia, serif; font-weight: 700; }
+.c-grid { stroke: #1E1E24; stroke-width: 1; }
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="header-label">Programa de Entrenamiento</div>
-  <div class="header-title" id="dayTitle"></div>
+
+<!-- WORKOUT SCREEN -->
+<div id="screenWorkout" class="screen active">
+  <div class="header">
+    <div class="header-label">Programa de Entrenamiento</div>
+    <div class="header-title" id="dayTitle"></div>
+  </div>
+  <div class="day-selector" id="daySelector"></div>
+  <div class="progress-wrap">
+    <div class="progress-meta"><span>PROGRESO</span><span id="progressText"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div class="notes-banner" id="notesBanner"></div>
+  <div class="ex-list" id="exList"></div>
 </div>
-<div class="day-selector" id="daySelector"></div>
-<div class="progress-wrap">
-  <div class="progress-meta"><span>PROGRESO</span><span id="progressText"></span></div>
-  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- STATS SCREEN -->
+<div id="screenStats" class="screen">
+  <div class="stats-header">
+    <div class="stats-title">📊 Progreso</div>
+    <div class="stats-subtitle" id="statsSubtitle"></div>
+  </div>
+  <div class="stats-tabs">
+    <button class="stats-tab active" onclick="switchTab('calendar',this)">📅 Calendario</button>
+    <button class="stats-tab" onclick="switchTab('chart',this)">📈 Pesos</button>
+    <button class="stats-tab" onclick="switchTab('sessions',this)">📋 Sesiones</button>
+  </div>
+  <div id="tabCalendar" class="tab-pane active">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+      <div class="cal-month" id="calMonthLabel"></div>
+      <button class="cal-nav-btn" onclick="calNext()">›</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+  <div id="tabChart" class="tab-pane">
+    <div class="chart-selector">
+      <select id="chartExSelect" onchange="renderChart()"></select>
+    </div>
+    <div class="chart-card" id="chartWrap"></div>
+  </div>
+  <div id="tabSessions" class="tab-pane">
+    <div id="sessionsList"></div>
+  </div>
 </div>
-<div class="notes-banner" id="notesBanner"></div>
-<div class="ex-list" id="exList"></div>
-<div class="completion" id="completion">🎉 ¡Sesión completada! Gran trabajo, Noe.</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="navWorkout" onclick="goScreen('workout')">
+    <span class="nav-icon">🏋️</span>
+    <span class="nav-label">HOY</span>
+  </button>
+  <div class="nav-divider"></div>
+  <button class="nav-btn" id="navStats" onclick="goScreen('stats')">
+    <span class="nav-icon">📊</span>
+    <span class="nav-label">PROGRESO</span>
+  </button>
+</nav>
 
 <script>
 const DAYS = [
-  {
-    id:0, label:"DÍA 1", title:"🍑 Piernas · Glúteos", color:"#E8624A", icon:"🍑",
+  { id:0, label:"DÍA 1", title:"🍑 Piernas · Glúteos", color:"#E8624A", icon:"🍑",
     notes:"Última serie: llega al fallo y haz 2 descendentes (-20% peso). Series previas: quédate a 1 rep del fallo. Descanso: 1 min entre series, 2-3 min entre ejercicios.",
     cardio:"10 min de elíptica o bicicleta estática a ritmo moderado.",
     exercises:[
-      {name:"Hip Thrust", sets:"5 × 12-10-8-6-6", muscles:"Glúteo mayor", tip:"Espalda apoyada en banco. Aprieta glúteo arriba 1 segundo. Barbilla al pecho.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hip-thrust-front.mp4"},
-      {name:"Aductores en máquina", sets:"4 × 12-10-8-6", muscles:"Aductores · Glúteo med.", tip:"Movimiento lento y controlado. Siente el estiramiento interno.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hip-adduction-front.mp4"},
-      {name:"Sentadilla Multipower", sets:"4 × 12-10-8-6", muscles:"Glúteo · Cuádriceps", tip:"Baja hasta paralelo o más. Rodillas siguen la dirección de los pies.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-squat-front.mp4"},
-      {name:"Prensa", sets:"5 × 12-10-8-6-6", muscles:"Cuádriceps · Glúteo", tip:"Pies altos y separados para más glúteo. No despegues la espalda.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-leg-press-front.mp4"},
-      {name:"Patada de glúteo en máquina", sets:"4 × 12-10-8-6", muscles:"Glúteo mayor", tip:"Rodilla en el pad, pie en la plataforma. Extiende la pierna atrás apretando el glúteo arriba 1 segundo.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-glute-kickback-front.mp4"},
-      {name:"Extensiones de cuádriceps", sets:"4 × 12-10-8-6", muscles:"Cuádriceps", tip:"Aislamiento final. Contrae fuerte arriba, baja controlado.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-machine-leg-extension-front.mp4"},
-      {name:"Femoral sentado en máquina", sets:"4 × 12-10-8-6", muscles:"Isquiotibiales", tip:"Baja controlado 3 segundos. No uses impulso.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-seated-leg-curl-front.mp4"},
-    ]
-  },
-  {
-    id:1, label:"DÍA 2", title:"💪 Espalda · Hombros", color:"#4A7CE8", icon:"💪",
+      {name:"Hip Thrust", sets:"5 × 12-10-8-6-6", muscles:"Glúteo mayor", tip:"Espalda apoyada en banco. Aprieta glúteo arriba 1 segundo. Barbilla al pecho.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hip-thrust-front.mp4"},
+      {name:"Aductores en máquina", sets:"4 × 12-10-8-6", muscles:"Aductores · Glúteo med.", tip:"Movimiento lento y controlado. Siente el estiramiento interno.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hip-adduction-front.mp4"},
+      {name:"Sentadilla Multipower", sets:"4 × 12-10-8-6", muscles:"Glúteo · Cuádriceps", tip:"Baja hasta paralelo o más. Rodillas siguen la dirección de los pies.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Barbell-barbell-squat-front.mp4"},
+      {name:"Prensa", sets:"5 × 12-10-8-6-6", muscles:"Cuádriceps · Glúteo", tip:"Pies altos y separados para más glúteo. No despegues la espalda.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-leg-press-front.mp4"},
+      {name:"Patada de glúteo en máquina", sets:"4 × 12-10-8-6", muscles:"Glúteo mayor", tip:"Rodilla en el pad, pie en la plataforma. Extiende la pierna atrás apretando el glúteo arriba 1 segundo.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-glute-kickback-front.mp4"},
+      {name:"Extensiones de cuádriceps", sets:"4 × 12-10-8-6", muscles:"Cuádriceps", tip:"Aislamiento final. Contrae fuerte arriba, baja controlado.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-machine-leg-extension-front.mp4"},
+      {name:"Femoral sentado en máquina", sets:"4 × 12-10-8-6", muscles:"Isquiotibiales", tip:"Baja controlado 3 segundos. No uses impulso.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-seated-leg-curl-front.mp4"},
+    ]},
+  { id:1, label:"DÍA 2", title:"💪 Espalda · Hombros", color:"#4A7CE8", icon:"💪",
     notes:"Última serie: llega al fallo y haz 2 descendentes (-20% peso). Descanso: 1 min entre series, 2-3 min entre ejercicios.",
     cardio:"10 min de cinta a paso rápido o elíptica.",
     exercises:[
-      {name:"Press de hombros en máquina", sets:"5 × 12-10-8-6-6", muscles:"Deltoides · Tríceps", tip:"Espalda pegada al respaldo. Empuja hacia arriba hasta casi extender los codos. Baja controlado.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-overhand-overhead-press-front.mp4",
-       youtube:"https://youtube.com/shorts/9EBmwjZ_7wk"},
-      {name:"Jalón en máquina (agarre ancho)", sets:"4 × 12-10-8-6", muscles:"Dorsal · Bíceps", tip:"Inclínate ligeramente atrás. Lleva los codos hacia las costillas. Escápulas juntas al final.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-machine-pulldown-front.mp4",
-       youtube:"https://youtu.be/pOmyhD7qb7E"},
-      {name:"Remo en máquina sentada", sets:"4 × 12-10-8-6", muscles:"Dorsal · Trapecio", tip:"Saca pecho al tirar. Lleva las manos al abdomen. Escápulas juntas en el punto final.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-machine-seated-cable-row-front.mp4",
-       youtube:"https://youtube.com/shorts/iyOM6y5ADAQ"},
-      {name:"Abs crunch en máquina", sets:"4 × máx", muscles:"Abdomen", tip:"Redondea la espalda al bajar. No uses impulso, contrae el abdomen en cada rep.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-crunch-front.mp4"},
-      {name:"Hiperextensiones en máquina (45°)", sets:"4 × 12-10-8-6", muscles:"Lumbares · Glúteo", tip:"Caderas en el borde del pad. Sube hasta neutral, no arquees de más.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-machine-back-extension-front.mp4",
-       youtube:"https://youtube.com/shorts/Hn5UVCdUHzQ"},
-      {name:"Vuelos laterales mancuerna", sets:"4 × 12-10-8-6", muscles:"Deltoides lateral", tip:"Codos ligeramente doblados. Sube hasta la altura del hombro. Baja lento.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-lateral-raise-front.mp4",
-       youtube:"https://youtube.com/shorts/UFcaodmbXd8"},
-      {name:"Elevaciones de piernas tumbada (abs)", sets:"4 × máx", muscles:"Abdomen · Core", tip:"Piernas juntas, sube lento y baja sin dejar caer hasta el suelo.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-laying-leg-raises-front.mp4"},
-      {name:"Gemelos en máquina", sets:"4 × 12-10-8-6", muscles:"Gemelos · Sóleo", tip:"Rango completo. Baja hasta el estiramiento máximo, sube de puntillas y aguanta 1 segundo.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-machine-seated-calf-raise-front.mp4"},
-    ]
-  },
-  {
-    id:2, label:"DÍA 3", title:"🍑 Piernas · Glúteos", color:"#48B87A", icon:"🍑",
+      {name:"Press de hombros en máquina", sets:"4 × 12-10-8-6", muscles:"Deltoides · Tríceps", tip:"Espalda pegada al respaldo. Empuja hacia arriba hasta casi extender los codos. Baja controlado.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-overhand-overhead-press-front.mp4", youtube:"https://youtube.com/shorts/9EBmwjZ_7wk"},
+      {name:"Jalón en máquina (agarre ancho)", sets:"4 × 12-10-8-6", muscles:"Dorsal · Bíceps", tip:"Inclínate ligeramente atrás. Lleva los codos hacia las costillas. Escápulas juntas al final.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-machine-pulldown-front.mp4", youtube:"https://youtu.be/pOmyhD7qb7E"},
+      {name:"Remo en máquina sentada", sets:"4 × 12-10-8-6", muscles:"Dorsal · Trapecio", tip:"Saca pecho al tirar. Lleva las manos al abdomen. Escápulas juntas en el punto final.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-machine-seated-cable-row-front.mp4", youtube:"https://youtube.com/shorts/iyOM6y5ADAQ"},
+      {name:"Abs crunch en máquina", sets:"4 × máx", muscles:"Abdomen", tip:"Redondea la espalda al bajar. No uses impulso, contrae el abdomen en cada rep.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-crunch-front.mp4"},
+      {name:"Hiperextensiones en máquina (45°)", sets:"4 × 12-10-8-6", muscles:"Lumbares · Glúteo", tip:"Caderas en el borde del pad. Sube hasta neutral, no arquees de más.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-machine-back-extension-front.mp4", youtube:"https://youtube.com/shorts/Hn5UVCdUHzQ"},
+      {name:"Vuelos laterales mancuerna", sets:"4 × 12-10-8-6", muscles:"Deltoides lateral", tip:"Codos ligeramente doblados. Sube hasta la altura del hombro. Baja lento.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-lateral-raise-front.mp4", youtube:"https://youtube.com/shorts/UFcaodmbXd8"},
+      {name:"Elevaciones de piernas tumbada (abs)", sets:"4 × máx", muscles:"Abdomen · Core", tip:"Piernas juntas, sube lento y baja sin dejar caer hasta el suelo.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-laying-leg-raises-front.mp4"},
+      {name:"Gemelos en máquina", sets:"4 × 12-10-8-6", muscles:"Gemelos · Sóleo", tip:"Rango completo. Baja hasta el estiramiento máximo, sube de puntillas y aguanta 1 segundo.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-machine-seated-calf-raise-front.mp4"},
+    ]},
+  { id:2, label:"DÍA 3", title:"🍑 Piernas · Glúteos", color:"#48B87A", icon:"🍑",
     notes:"Segunda sesión de piernas/glúteos. Última serie al fallo con 2 descendentes. Descanso: 1 min entre series, 2-3 min entre ejercicios.",
     cardio:"10 min de stepper. Activa glúteo incluso en el cardio.",
     exercises:[
-      {name:"Hip Thrust", sets:"5 × 12-10-8-6-6", muscles:"Glúteo mayor", tip:"Busca más peso que el día 1. Aprieta glúteo arriba 1 segundo.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hip-thrust-front.mp4"},
-      {name:"Peso muerto rumano con mancuernas", sets:"4 × 12-10-8-6", muscles:"Isquiotibiales · Glúteo", tip:"Espalda recta, baja sintiendo el estiramiento en los isquios. Mancuernas pegadas a las piernas.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-romanian-deadlift-front.mp4"},
-      {name:"Prensa", sets:"4 × 12-10-8-6", muscles:"Cuádriceps · Glúteo", tip:"Varía posición de pies respecto al día 1 para diferente estímulo.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-leg-press-front.mp4"},
-      {name:"Gemelos en prensa de pierna", sets:"4 × 12-10-8-6", muscles:"Gemelos · Sóleo", tip:"Pies en la parte baja de la plataforma. Talones fuera. Sube de puntillas y aguanta 1 segundo arriba.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-horizontal-leg-press-calf-raise-front.mp4"},
-      {name:"Abductores en máquina", sets:"4 × 12-10-8-6", muscles:"Glúteo medio · Abductores", tip:"Abre lento y cierra controlado. Siente el glúteo medio en cada rep.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hip-abduction-front.mp4"},
-      {name:"Sentadilla Búlgara con mancuernas", sets:"4 × 12-10-8-6", muscles:"Glúteo · Cuádriceps", tip:"Pie trasero elevado. Paso largo para más glúteo. Rodilla trasera casi toca el suelo.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-bulgarian-split-squat-front.mp4"},
-      {name:"Patada de glúteo en máquina", sets:"4 × 12-10-8-6", muscles:"Glúteo mayor", tip:"Aislamiento final. Rodilla en el pad, pie en la plataforma. Extiende bien la cadera y aprieta 1 segundo.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-glute-kickback-front.mp4"},
-    ]
-  },
-  {
-    id:3, label:"DÍA 4", title:"🔥 Pecho · Bíceps · Tríceps · Core", color:"#C84EC6", icon:"🔥",
+      {name:"Hip Thrust", sets:"5 × 12-10-8-6-6", muscles:"Glúteo mayor", tip:"Busca más peso que el día 1. Aprieta glúteo arriba 1 segundo.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hip-thrust-front.mp4"},
+      {name:"Peso muerto rumano con mancuernas", sets:"4 × 12-10-8-6", muscles:"Isquiotibiales · Glúteo", tip:"Espalda recta, baja sintiendo el estiramiento en los isquios. Mancuernas pegadas a las piernas.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-romanian-deadlift-front.mp4"},
+      {name:"Prensa", sets:"4 × 12-10-8-6", muscles:"Cuádriceps · Glúteo", tip:"Varía posición de pies respecto al día 1 para diferente estímulo.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-leg-press-front.mp4"},
+      {name:"Gemelos en prensa de pierna", sets:"4 × 12-10-8-6", muscles:"Gemelos · Sóleo", tip:"Pies en la parte baja de la plataforma. Talones fuera. Sube de puntillas y aguanta 1 segundo arriba.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-horizontal-leg-press-calf-raise-front.mp4"},
+      {name:"Abductores en máquina", sets:"4 × 12-10-8-6", muscles:"Glúteo medio · Abductores", tip:"Abre lento y cierra controlado. Siente el glúteo medio en cada rep.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hip-abduction-front.mp4"},
+      {name:"Sentadilla Búlgara con mancuernas", sets:"4 × 12-10-8-6", muscles:"Glúteo · Cuádriceps", tip:"Pie trasero elevado. Paso largo para más glúteo. Rodilla trasera casi toca el suelo.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-bulgarian-split-squat-front.mp4"},
+      {name:"Patada de glúteo en máquina", sets:"4 × 12-10-8-6", muscles:"Glúteo mayor", tip:"Aislamiento final. Rodilla en el pad, pie en la plataforma. Extiende bien la cadera y aprieta 1 segundo.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-glute-kickback-front.mp4"},
+    ]},
+  { id:3, label:"DÍA 4", title:"🔥 Pecho · Bíceps · Tríceps · Core", color:"#C84EC6", icon:"🔥",
     notes:"Última serie: llega al fallo y haz 2 descendentes (-20% peso). Descanso: 1 min entre series, 2-3 min entre ejercicios.",
     cardio:"10 min de bicicleta estática a ritmo suave para bajar pulsaciones.",
     exercises:[
-      {name:"Fondos entre bancos (tríceps)", sets:"4 × 12-10-8-6", muscles:"Tríceps · Pectoral", tip:"Baja hasta que los codos estén a 90°. No bajes demasiado ni bloquees.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-bench-dips-front.mp4",
-       youtube:"https://youtube.com/shorts/YUI84YIRHDo"},
-      {name:"Curl bíceps alterno con mancuernas", sets:"4 × 12-10-8-6", muscles:"Bíceps braquial", tip:"Un brazo cada vez. Rota la muñeca al subir. Codos fijos pegados al cuerpo.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-twisting-curl-front.mp4",
-       youtube:"https://www.youtube.com/shorts/e9nzjkmPRXY"},
-      {name:"Tríceps tras nuca con mancuerna", sets:"4 × 12-10-8-6", muscles:"Tríceps", tip:"Codos apuntando al techo. Baja lento detrás de la cabeza. Core apretado.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-overhead-tricep-extension-front.mp4",
-       youtube:"https://www.youtube.com/shorts/mCqFdXP8xJA"},
-      {name:"Abs crunch en máquina", sets:"4 × máx", muscles:"Abdomen", tip:"Redondea la espalda al bajar. Contrae el abdomen en cada rep, sin impulso.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-crunch-front.mp4"},
-      {name:"Curl bíceps con mancuernas (sentada)", sets:"4 × 12-10-8-6", muscles:"Bíceps braquial", tip:"Segunda serie de bíceps. Siéntate para eliminar el impulso. Baja lento 3 segundos.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-curl-front.mp4",
-       youtube:"https://www.youtube.com/shorts/ll0bUuWH7Ac"},
-      {name:"Elevaciones de piernas tumbada (abs)", sets:"4 × máx", muscles:"Abdomen · Core", tip:"Piernas juntas, sube lento y baja sin dejar caer hasta el suelo.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-laying-leg-raises-front.mp4"},
-      {name:"Aperturas en máquina (pecho)", sets:"4 × 12-10-8-6", muscles:"Pectoral", tip:"Junta las manos delante del pecho. Siente el estiramiento en la apertura.",
-       mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-pec-fly-front.mp4",
-       youtube:"https://www.youtube.com/shorts/-PNgCrCPcPM"},
-    ]
-  }
+      {name:"Fondos entre bancos (tríceps)", sets:"4 × 12-10-8-6", muscles:"Tríceps · Pectoral", tip:"Baja hasta que los codos estén a 90°. No bajes demasiado ni bloquees.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-bench-dips-front.mp4", youtube:"https://youtube.com/shorts/YUI84YIRHDo"},
+      {name:"Curl bíceps alterno con mancuernas", sets:"4 × 12-10-8-6", muscles:"Bíceps braquial", tip:"Un brazo cada vez. Rota la muñeca al subir. Codos fijos pegados al cuerpo.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-dumbbell-twisting-curl-front.mp4", youtube:"https://www.youtube.com/shorts/e9nzjkmPRXY"},
+      {name:"Tríceps tras nuca con mancuerna", sets:"4 × 12-10-8-6", muscles:"Tríceps", tip:"Codos apuntando al techo. Baja lento detrás de la cabeza. Core apretado.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-overhead-tricep-extension-front.mp4", youtube:"https://www.youtube.com/shorts/mCqFdXP8xJA"},
+      {name:"Abs crunch en máquina", sets:"4 × máx", muscles:"Abdomen", tip:"Redondea la espalda al bajar. Contrae el abdomen en cada rep, sin impulso.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-crunch-front.mp4"},
+      {name:"Curl bíceps con mancuernas (sentada)", sets:"4 × 12-10-8-6", muscles:"Bíceps braquial", tip:"Segunda serie de bíceps. Siéntate para eliminar el impulso. Baja lento 3 segundos.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Dumbbells-dumbbell-curl-front.mp4", youtube:"https://www.youtube.com/shorts/ll0bUuWH7Ac"},
+      {name:"Elevaciones de piernas tumbada (abs)", sets:"4 × máx", muscles:"Abdomen · Core", tip:"Piernas juntas, sube lento y baja sin dejar caer hasta el suelo.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Bodyweight-laying-leg-raises-front.mp4"},
+      {name:"Aperturas en máquina (pecho)", sets:"4 × 12-10-8-6", muscles:"Pectoral", tip:"Junta las manos delante del pecho. Siente el estiramiento en la apertura.", mp4:"https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-pec-fly-front.mp4", youtube:"https://www.youtube.com/shorts/-PNgCrCPcPM"},
+    ]}
 ];
 
-const MUSCLE_COLORS = {
+const MC = {
   "Glúteo mayor":"#E8624A","Glúteo med.":"#F0884A","Glúteo":"#E8624A","Glúteo medio":"#F0884A",
   "Cuádriceps":"#4A7CE8","Isquiotibiales":"#7B5EA7","Aductores":"#E84A8A","Abductores":"#E84A8A",
   "Dorsal":"#4A9BE8","Trapecio":"#4AB8E8","Deltoides":"#48B87A","Deltoides lateral":"#48B87A",
@@ -174,143 +237,271 @@ const MUSCLE_COLORS = {
   "Core":"#48B87A","Abdomen":"#48B87A","Gemelos":"#4AB8E8","Sóleo":"#4A9BE8",
 };
 
-function parseSets(str) {
-  if (str.includes("máx")) return Array(4).fill({reps:"máx"});
-  const [countStr, repsStr] = str.split("×").map(s=>s.trim());
-  const count = parseInt(countStr);
-  const repsList = repsStr.split("-");
-  return Array.from({length:count}, (_,i) => ({reps: repsList[i] || repsList[repsList.length-1]}));
+function loadData() { try { return JSON.parse(localStorage.getItem("gymlog_v2")||"{}"); } catch(e){return{};} }
+function saveData(d) { localStorage.setItem("gymlog_v2",JSON.stringify(d)); }
+function loadHistory() { try { return JSON.parse(localStorage.getItem("gymlog_history")||"[]"); } catch(e){return[];} }
+function saveHistory(h) { localStorage.setItem("gymlog_history",JSON.stringify(h)); }
+
+let state = { activeDay:0, expanded:null, data:loadData() };
+let curScreen='workout', activeTab='calendar';
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+
+function getKey(d,e,t,s){
+  if(t==="weight") return `d${d}_e${e}_s${s}_w`;
+  if(t==="note")   return `d${d}_e${e}_n`;
+  if(t==="done")   return `d${d}_e${e}_done`;
 }
 
-function loadData() { try { return JSON.parse(localStorage.getItem("gymlog_v2") || "{}"); } catch(e) { return {}; } }
-function saveData(data) { localStorage.setItem("gymlog_v2", JSON.stringify(data)); }
-
-let state = { activeDay: 0, expanded: null, data: loadData() };
-
-function getKey(dayId, exIdx, type, serieIdx) {
-  if (type === "weight") return `d${dayId}_e${exIdx}_s${serieIdx}_w`;
-  if (type === "note") return `d${dayId}_e${exIdx}_n`;
-  if (type === "done") return `d${dayId}_e${exIdx}_done`;
+function parseSets(str){
+  if(str.includes("máx")) return Array(4).fill({reps:"máx"});
+  const[c,r]=str.split("×").map(s=>s.trim());
+  const rl=r.split("-");
+  return Array.from({length:parseInt(c)},(_,i)=>({reps:rl[i]||rl[rl.length-1]}));
 }
 
-function render() {
-  const day = DAYS[state.activeDay];
-  const color = day.color;
+function goScreen(s){
+  curScreen=s;
+  ['workout','stats'].forEach(k=>{
+    document.getElementById('screen'+k.charAt(0).toUpperCase()+k.slice(1)).classList.toggle('active',k===s);
+    document.getElementById('nav'+k.charAt(0).toUpperCase()+k.slice(1)).classList.toggle('active',k===s);
+  });
+  if(s==='stats'){ updateSubtitle(); renderActiveTab(); populateChartSelector(); }
+}
 
-  document.getElementById("dayTitle").textContent = day.title;
-  document.getElementById("dayTitle").style.backgroundImage = `linear-gradient(135deg, ${color}, #F0EDE8)`;
-  document.getElementById("dayTitle").style.webkitBackgroundClip = "text";
-  document.getElementById("dayTitle").style.webkitTextFillColor = "transparent";
+function saveSession(dayId){
+  const day=DAYS[dayId], h=loadHistory(), today=new Date().toISOString().split('T')[0];
+  if(h.some(s=>s.date===today&&s.dayId===dayId)) return;
+  const exercises=day.exercises.map((ex,i)=>{
+    const ws=[];
+    parseSets(ex.sets).forEach((_,si)=>{ const w=state.data[getKey(dayId,i,"weight",si)]; if(w) ws.push(w); });
+    const mx=ws.length?Math.max(...ws.map(w=>parseFloat(w)||0)):null;
+    return{name:ex.name,weights:ws,maxWeight:mx};
+  });
+  h.unshift({date:today,dayId,dayLabel:day.label,dayTitle:day.title,color:day.color,exercises});
+  saveHistory(h);
+}
 
-  document.getElementById("daySelector").innerHTML = DAYS.map((d,i) => `
+function render(){
+  const day=DAYS[state.activeDay], c=day.color;
+  const el=id=>document.getElementById(id);
+
+  el("dayTitle").textContent=day.title;
+  el("dayTitle").style.backgroundImage=`linear-gradient(135deg,${c},#F0EDE8)`;
+  el("dayTitle").style.webkitBackgroundClip="text";
+  el("dayTitle").style.webkitTextFillColor="transparent";
+
+  el("daySelector").innerHTML=DAYS.map((d,i)=>`
     <button class="day-btn ${i===state.activeDay?'active':''}"
-      style="${i===state.activeDay ? `background:${d.color};box-shadow:0 3px 14px ${d.color}44` : ''}"
+      style="${i===state.activeDay?`background:${d.color};box-shadow:0 3px 14px ${d.color}44`:''}"
       onclick="selectDay(${i})">
-      <div class="icon">${d.icon}</div>
-      <div class="lbl">${d.label}</div>
+      <div class="icon">${d.icon}</div><div class="lbl">${d.label}</div>
     </button>`).join("");
 
-  const total = day.exercises.length;
-  const done = day.exercises.filter((_,i) => state.data[getKey(day.id,i,"done")]).length;
-  document.getElementById("progressText").textContent = `${done}/${total}`;
-  document.getElementById("progressText").style.color = color;
-  document.getElementById("progressFill").style.width = `${(done/total)*100}%`;
-  document.getElementById("progressFill").style.background = color;
+  const total=day.exercises.length;
+  const done=day.exercises.filter((_,i)=>state.data[getKey(day.id,i,"done")]).length;
+  el("progressText").textContent=`${done}/${total}`;
+  el("progressText").style.color=c;
+  el("progressFill").style.width=`${(done/total)*100}%`;
+  el("progressFill").style.background=c;
+  el("notesBanner").textContent=day.notes;
+  el("notesBanner").style.borderLeftColor=c;
 
-  const nb = document.getElementById("notesBanner");
-  nb.textContent = day.notes;
-  nb.style.borderLeftColor = color;
-
-  document.getElementById("exList").innerHTML = day.exercises.map((ex, i) => {
-    const isDone = !!state.data[getKey(day.id,i,"done")];
-    const isOpen = state.expanded === i;
-    const series = parseSets(ex.sets);
-    const note = state.data[getKey(day.id,i,"note")] || "";
-
-    const muscleTags = ex.muscles.split(" · ").map(m => {
-      const mc = MUSCLE_COLORS[m] || color;
-      return `<span class="muscle-tag" style="background:${mc}18;color:${mc};border-color:${mc}2A">${m}</span>`;
+  const exHTML=day.exercises.map((ex,i)=>{
+    const isDone=!!state.data[getKey(day.id,i,"done")];
+    const isOpen=state.expanded===i;
+    const series=parseSets(ex.sets);
+    const note=state.data[getKey(day.id,i,"note")]||"";
+    const tags=ex.muscles.split(" · ").map(m=>{
+      const mc2=MC[m]||c;
+      return `<span class="muscle-tag" style="background:${mc2}18;color:${mc2};border-color:${mc2}2A">${m}</span>`;
     }).join("");
-
-    const seriesBoxes = series.map((s,si) => {
-      const w = state.data[getKey(day.id,i,"weight",si)] || "";
-      return `<div class="serie-box" style="${w ? `border-color:${color}55` : ''}">
+    const boxes=series.map((s,si)=>{
+      const w=state.data[getKey(day.id,i,"weight",si)]||"";
+      return `<div class="serie-box" style="${w?`border-color:${c}55`:''}">
         <div class="serie-num">Serie ${si+1}</div>
-        <div class="serie-reps" style="color:${color}">${s.reps === "máx" ? "máx. reps" : s.reps+" reps"}</div>
-        <input class="serie-input" placeholder="peso" value="${w}"
+        <div class="serie-reps" style="color:${c}">${s.reps==="máx"?"máx. reps":s.reps+" reps"}</div>
+        <input class="serie-input" placeholder="peso kg" value="${w}"
           oninput="updateWeight(${i},${si},this.value)" onclick="event.stopPropagation()">
       </div>`;
     }).join("");
-
-    let mediaHtml = "";
-    if (ex.mp4) {
-      mediaHtml += `<video class="ex-video" src="${ex.mp4}" autoplay loop muted playsinline onerror="this.style.display='none'"></video>`;
-    }
-    if (ex.youtube) {
-      mediaHtml += `<a href="${ex.youtube}" target="_blank" class="video-link" style="border-color:${color}30;color:${color}">▶ Ver vídeo en YouTube</a>`;
-    }
-
-    return `
-      <div class="ex-card ${isDone?'done':''}" style="${isDone ? `border-color:${color}44` : ''}">
-        <div class="ex-row" onclick="toggleExpand(${i})">
-          <div class="ex-num ${isDone?'done':''}" style="${isDone ? `background:${color}` : ''}"
-            onclick="event.stopPropagation();toggleDone(${i})">${isDone ? "✓" : i+1}</div>
-          <div class="ex-info">
-            <div class="ex-name ${isDone?'done':''}">${ex.name}</div>
-            <div class="ex-sets" style="color:${color}">${ex.sets}</div>
-          </div>
-          <div class="ex-arrow ${isOpen?'open':''}">▼</div>
+    let media="";
+    if(ex.mp4) media+=`<video class="ex-video" src="${ex.mp4}" autoplay loop muted playsinline onerror="this.style.display='none'"></video>`;
+    if(ex.youtube) media+=`<a href="${ex.youtube}" target="_blank" class="video-link" style="border-color:${c}30;color:${c}">▶ Ver vídeo en YouTube</a>`;
+    return `<div class="ex-card ${isDone?'done':''}" style="${isDone?`border-color:${c}44`:''}">
+      <div class="ex-row" onclick="toggleExpand(${i})">
+        <div class="ex-num ${isDone?'done':''}" style="${isDone?`background:${c}`:''}"
+          onclick="event.stopPropagation();toggleDone(${i})">${isDone?"✓":i+1}</div>
+        <div class="ex-info">
+          <div class="ex-name ${isDone?'done':''}">${ex.name}</div>
+          <div class="ex-sets" style="color:${c}">${ex.sets}</div>
         </div>
-        <div class="ex-detail ${isOpen?'open':''}">
-          <div class="muscle-tags">${muscleTags}</div>
-          <div class="tip-box">💡 ${ex.tip}</div>
-          ${mediaHtml}
-          <div class="series-label">SERIES</div>
-          <div class="series-grid">${seriesBoxes}</div>
-          <textarea class="note-input" rows="2"
-            placeholder="📝 Notas (sensaciones, qué mejorar...)"
-            style="${note ? `border-color:${color}55` : ''}"
-            oninput="updateNote(${i},this.value)"
-            onclick="event.stopPropagation()">${note}</textarea>
-        </div>
-      </div>`;
-  }).join("") + `
-    <div class="cardio-box" style="border-left-color:${color}">
+        <div class="ex-arrow ${isOpen?'open':''}">▼</div>
+      </div>
+      <div class="ex-detail ${isOpen?'open':''}">
+        <div class="muscle-tags">${tags}</div>
+        <div class="tip-box">💡 ${ex.tip}</div>
+        ${media}
+        <div class="series-label">SERIES</div>
+        <div class="series-grid">${boxes}</div>
+        <textarea class="note-input" rows="2"
+          placeholder="📝 Notas (sensaciones, qué mejorar...)"
+          style="${note?`border-color:${c}55`:''}"
+          oninput="updateNote(${i},this.value)"
+          onclick="event.stopPropagation()">${note}</textarea>
+      </div>
+    </div>`;
+  }).join("");
+
+  const completionHTML=`<div class="completion-bar" style="display:${done===total?'block':'none'};background:linear-gradient(135deg,${c},${c}BB);box-shadow:0 4px 20px ${c}44">
+    🎉 ¡Sesión completada! Gran trabajo, Noe.
+  </div>`;
+
+  el("exList").innerHTML=completionHTML+exHTML+`
+    <div class="cardio-box" style="border-left-color:${c}">
       <span>🏃‍♀️</span>
       <div>
-        <div class="cardio-label" style="color:${color}">CARDIO FINAL</div>
+        <div class="cardio-label" style="color:${c}">CARDIO FINAL</div>
         <div class="cardio-text">${day.cardio}</div>
       </div>
     </div>`;
 
-  const comp = document.getElementById("completion");
-  if (done === total) {
-    comp.style.display = "block";
-    comp.style.background = `linear-gradient(135deg, ${color}, ${color}BB)`;
-    comp.style.boxShadow = `0 6px 24px ${color}55`;
-  } else {
-    comp.style.display = "none";
-  }
+  if(done===total) saveSession(day.id);
 }
 
-function selectDay(i) { state.activeDay = i; state.expanded = null; render(); }
-function toggleExpand(i) { state.expanded = state.expanded === i ? null : i; render(); }
-function toggleDone(i) {
-  const day = DAYS[state.activeDay];
-  const key = getKey(day.id, i, "done");
-  state.data[key] = !state.data[key];
-  saveData(state.data);
-  render();
+function selectDay(i){state.activeDay=i;state.expanded=null;render();}
+function toggleExpand(i){state.expanded=state.expanded===i?null:i;render();}
+function toggleDone(i){
+  const k=getKey(DAYS[state.activeDay].id,i,"done");
+  state.data[k]=!state.data[k];
+  saveData(state.data);render();
 }
-function updateWeight(exIdx, serieIdx, val) {
-  const day = DAYS[state.activeDay];
-  state.data[getKey(day.id, exIdx, "weight", serieIdx)] = val;
-  saveData(state.data);
+function updateWeight(e,s,v){state.data[getKey(DAYS[state.activeDay].id,e,"weight",s)]=v;saveData(state.data);}
+function updateNote(e,v){state.data[getKey(DAYS[state.activeDay].id,e,"note")]=v;saveData(state.data);}
+
+function updateSubtitle(){
+  const h=loadHistory(), now=new Date();
+  const mc=h.filter(s=>{const d=new Date(s.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).length;
+  document.getElementById("statsSubtitle").textContent=`${h.length} sesiones totales · ${mc} este mes`;
 }
-function updateNote(exIdx, val) {
-  const day = DAYS[state.activeDay];
-  state.data[getKey(day.id, exIdx, "note")] = val;
-  saveData(state.data);
+
+function switchTab(tab,btn){
+  activeTab=tab;
+  document.querySelectorAll('.stats-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-pane').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  renderActiveTab();
+}
+function renderActiveTab(){
+  if(activeTab==='calendar') renderCalendar();
+  else if(activeTab==='chart') renderChart();
+  else renderSessions();
+}
+
+const MONTHS=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const DOWS=["L","M","X","J","V","S","D"];
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
+
+function renderCalendar(){
+  document.getElementById("calMonthLabel").textContent=`${MONTHS[calMonth]} ${calYear}`;
+  const h=loadHistory(), byDate={};
+  h.forEach(s=>{byDate[s.date]=s.color;});
+  let dow=new Date(calYear,calMonth,1).getDay();
+  dow=dow===0?6:dow-1;
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  const today=new Date().toISOString().split('T')[0];
+  let html=DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join("");
+  for(let i=0;i<dow;i++) html+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const col=byDate[ds], isT=ds===today, tr=!!col;
+    const bg=tr?`background:${col}28;color:${col};`:isT?'color:#666;border:1px solid #2A2A2A;':'';
+    const dot=tr?`<span style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:${col};display:block"></span>`:'';
+    html+=`<div class="cal-day ${tr?'trained':''} ${isT?'today':''}" style="${bg}">${d}${dot}</div>`;
+  }
+  document.getElementById("calGrid").innerHTML=html;
+}
+
+function renderSessions(){
+  const h=loadHistory(), el=document.getElementById("sessionsList");
+  if(!h.length){
+    el.innerHTML=`<div class="no-data">Aún no tienes sesiones guardadas.<br>Completa tu primera rutina y<br>aparecerá aquí automáticamente 💪</div>`;
+    return;
+  }
+  el.innerHTML=h.map(s=>{
+    const d=new Date(s.date+'T12:00:00');
+    const wd=d.toLocaleDateString('es-ES',{weekday:'long'});
+    const ds=d.toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+    const rows=s.exercises.map(e=>{
+      const hw=e.maxWeight&&e.maxWeight>0;
+      return `<div class="session-ex">
+        <span class="session-ex-name">${e.name}</span>
+        <span class="session-ex-w" style="color:${hw?s.color:'#333'}">${hw?e.maxWeight+'kg':'—'}</span>
+      </div>`;
+    }).join("");
+    return `<div class="session-card" style="border-left-color:${s.color}">
+      <div class="session-top">
+        <div class="session-day" style="color:${s.color}">${s.dayLabel} · ${s.dayTitle.replace(/^\S+ /,'')}</div>
+        <div class="session-date">${wd}<br>${ds}</div>
+      </div>${rows}
+    </div>`;
+  }).join("");
+}
+
+function populateChartSelector(){
+  const sel=document.getElementById("chartExSelect"), all=[];
+  DAYS.forEach(d=>d.exercises.forEach(e=>{if(!all.includes(e.name))all.push(e.name);}));
+  sel.innerHTML=all.map(n=>`<option value="${n}">${n}</option>`).join("");
+  renderChart();
+}
+
+function renderChart(){
+  const exName=document.getElementById("chartExSelect").value;
+  const h=loadHistory(), wrap=document.getElementById("chartWrap");
+  let exColor="#48B87A";
+  DAYS.forEach(d=>d.exercises.forEach(e=>{if(e.name===exName)exColor=d.color;}));
+  const pts=h.filter(s=>s.exercises.some(e=>e.name===exName&&e.maxWeight>0))
+    .map(s=>({date:s.date,weight:s.exercises.find(e=>e.name===exName).maxWeight})).reverse();
+  if(pts.length<2){
+    wrap.innerHTML=`<div style="text-align:center;padding:40px 0;color:#3A3A3A;font-size:12px;line-height:2">Necesitas al menos 2 sesiones<br>con peso para ver el gráfico 📈</div>`;
+    return;
+  }
+  const W=300,H=160,PL=38,PR=16,PT=22,PB=28,cW=W-PL-PR,cH=H-PT-PB;
+  const ws=pts.map(p=>p.weight),mn=Math.min(...ws),mx=Math.max(...ws),rng=mx-mn||1;
+  const co=pts.map((p,i)=>({x:PL+i*(cW/(pts.length-1)),y:PT+cH-((p.weight-mn)/rng)*cH,w:p.weight,date:p.date}));
+  let yL="";
+  [0,.25,.5,.75,1].forEach(t=>{
+    const v=mn+rng*t,y=PT+cH-t*cH;
+    yL+=`<line class="c-grid" x1="${PL}" y1="${y}" x2="${PL+cW}" y2="${y}" stroke-dasharray="3,4"/>`;
+    yL+=`<text class="c-label" x="${PL-4}" y="${y+3}" text-anchor="end">${v.toFixed(0)}</text>`;
+  });
+  let xL="";
+  const si=new Set([0,pts.length-1]);
+  if(pts.length>3) si.add(Math.floor(pts.length/2));
+  si.forEach(i=>{const d=new Date(pts[i].date+'T12:00:00');xL+=`<text class="c-label" x="${co[i].x}" y="${H-4}" text-anchor="middle">${d.getDate()}/${d.getMonth()+1}</text>`;});
+  const line=co.map(c=>`${c.x},${c.y}`).join(" ");
+  const area=`${PL},${PT+cH} `+co.map(c=>`${c.x},${c.y}`).join(" ")+` ${PL+cW},${PT+cH}`;
+  const dots=co.map((c,i)=>{
+    const show=i===0||i===co.length-1||pts.length<=5;
+    return `<circle cx="${c.x}" cy="${c.y}" r="4" fill="${exColor}" stroke="#0F0F12" stroke-width="2"/>
+      ${show?`<text class="c-vallabel" x="${c.x}" y="${c.y-8}" text-anchor="middle" fill="${exColor}">${c.w}kg</text>`:''}`;
+  }).join("");
+  const trend=ws[ws.length-1]-ws[0];
+  const tStr=trend>0?`+${trend.toFixed(1)} kg ↑`:trend<0?`${trend.toFixed(1)} kg ↓`:`Estable →`;
+  const tCol=trend>0?"#48B87A":trend<0?"#E8624A":"#888";
+  wrap.innerHTML=`
+    <div class="chart-top"><div class="chart-lbl">PESO MÁX. POR SESIÓN (kg)</div><div class="chart-trend" style="color:${tCol}">${tStr}</div></div>
+    <svg viewBox="0 0 ${W} ${H}" class="chart-svg">
+      <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${exColor}" stop-opacity="0.22"/>
+        <stop offset="100%" stop-color="${exColor}" stop-opacity="0"/>
+      </linearGradient></defs>
+      ${yL}${xL}
+      <polygon points="${area}" fill="url(#ag)"/>
+      <polyline fill="none" stroke="${exColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${line}"/>
+      ${dots}
+    </svg>`;
 }
 
 render();
