@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GYM.LOG</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0F0F12; color: #F0EDE8; font-family: Georgia, serif; min-height: 100vh; }
+  .header { padding: 22px 16px 0; text-align: center; }
+  .header-label { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: #555; margin-bottom: 4px; }
+  .header-title { font-size: 21px; font-weight: 700; margin: 0; transition: all 0.3s; }
+  .day-selector { display: flex; gap: 6px; padding: 14px 16px 0; }
+  .day-btn { flex: 1; padding: 9px 4px; border-radius: 11px; border: none; cursor: pointer; background: #1C1C22; color: #666; font-family: Georgia, serif; font-size: 10px; font-weight: 700; transition: all 0.2s ease; }
+  .day-btn.active { color: #fff; }
+  .day-btn .icon { font-size: 14px; }
+  .day-btn .lbl { margin-top: 2px; }
+  .progress-wrap { padding: 11px 16px 0; }
+  .progress-meta { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 10px; color: #555; }
+  .progress-bar { height: 3px; background: #1C1C22; border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+  .notes-banner { margin: 10px 16px 0; padding: 8px 12px; background: #1C1C22; border-radius: 8px; font-size: 11px; color: #666; line-height: 1.6; border-left-width: 3px; border-left-style: solid; }
+  .ex-list { padding: 10px 16px 28px; }
+  .ex-card { margin-bottom: 8px; border-radius: 13px; border-width: 1px; border-style: solid; border-color: #252528; background: #1C1C22; overflow: hidden; transition: all 0.25s; }
+  .ex-card.done { background: #141c13; }
+  .ex-row { display: flex; align-items: center; padding: 11px 13px; cursor: pointer; gap: 10px; }
+  .ex-num { width: 28px; height: 28px; border-radius: 8px; background: #252528; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #555; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+  .ex-num.done { color: #fff; }
+  .ex-info { flex: 1; min-width: 0; }
+  .ex-name { font-size: 13px; font-weight: 600; color: #F0EDE8; line-height: 1.3; transition: all 0.2s; }
+  .ex-name.done { color: #555; text-decoration: line-through; }
+  .ex-sets { font-size: 10px; margin-top: 1px; font-family: monospace; }
+  .ex-arrow { color: #333; font-size: 10px; flex-shrink: 0; transition: transform 0.2s; }
+  .ex-arrow.open { transform: rotate(180deg); }
+  .ex-detail { padding: 0 13px 13px; border-top: 1px solid #222; display: none; }
+  .ex-detail.open { display: block; }
+  .muscle-tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 10px 0 9px; }
+  .muscle-tag { padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 600; border-width: 1px; border-style: solid; }
+  .tip-box { font-size: 11px; color: #AAA; line-height: 1.6; padding: 7px 9px; background: #141416; border-radius: 7px; margin-bottom: 10px; }
+  .video-link { display: flex; align-items: center; gap: 6px; padding: 6px 9px; background: #12122A; border-radius: 7px; border-width: 1px; border-style: solid; text-decoration: none; font-size: 11px; font-weight: 600; margin-bottom: 10px; }
+  .series-label { font-size: 10px; color: #555; letter-spacing: 0.1em; margin-bottom: 7px; }
+  .series-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 6px; margin-bottom: 10px; }
+  .serie-box { background: #141416; border: 1px solid #2A2A2A; border-radius: 9px; padding: 8px 9px; transition: border 0.2s; }
+  .serie-num { font-size: 10px; color: #666; margin-bottom: 3px; }
+  .serie-reps { font-size: 12px; font-weight: 700; margin-bottom: 6px; font-family: monospace; }
+  .serie-input { width: 100%; padding: 5px 7px; border-radius: 5px; border: 1px solid #2A2A2A; background: #0F0F12; color: #F0EDE8; font-size: 11px; font-family: Georgia, serif; outline: none; }
+  .note-input { width: 100%; padding: 7px 9px; border-radius: 7px; border: 1px solid #2A2A2A; background: #141416; color: #F0EDE8; font-size: 11px; font-family: Georgia, serif; outline: none; resize: none; line-height: 1.5; transition: border 0.2s; }
+  .cardio-box { margin-top: 4px; padding: 10px 12px; background: #1C1C22; border-radius: 10px; border-left-width: 3px; border-left-style: solid; display: flex; gap: 8px; }
+  .cardio-label { font-size: 9px; letter-spacing: 0.15em; font-weight: 700; margin-bottom: 2px; }
+  .cardio-text { font-size: 11px; color: #777; line-height: 1.5; }
+  .completion { position: fixed; bottom: 20px; left: 16px; right: 16px; padding: 12px 20px; border-radius: 13px; text-align: center; font-size: 14px; font-weight: 700; color: #fff; z-index: 100; display: none; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-label">Programa de Entrenamiento</div>
+  <div class="header-title" id="dayTitle"></div>
+</div>
+<div class="day-selector" id="daySelector"></div>
+<div class="progress-wrap">
+  <div class="progress-meta"><span>PROGRESO</span><span id="progressText"></span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+<div class="notes-banner" id="notesBanner"></div>
+<div class="ex-list" id="exList"></div>
+<div class="completion" id="completion">🎉 ¡Sesión completada! Gran trabajo, Noe.</div>
+<script>
+const DAYS=[{id:0,label:"DÍA 1",title:"🍑 Piernas · Glúteos",color:"#E8624A",icon:"🍑",notes:"Última serie: llega al fallo y haz 2 descendentes (-20% peso). Series previas: quédate a 1 rep del fallo. Descanso: 1 min entre series, 2-3 min entre ejercicios.",cardio:"10 min de elíptica o bicicleta estática a ritmo moderado.",exercises:[{name:"Hip Thrust",sets:"5 × 12-10-8-6-6",muscles:"Glúteo mayor",tip:"Espalda apoyada en banco. Aprieta glúteo arriba 1 segundo. Barbilla al pecho."},{name:"Aductores en máquina",sets:"4 × 12-10-8-6",muscles:"Aductores · Glúteo med.",tip:"Movimiento lento y controlado. Siente el estiramiento interno."},{name:"Sentadilla Multipower",sets:"4 × 12-10-8-6",muscles:"Glúteo · Cuádriceps",tip:"Baja hasta paralelo o más. Rodillas siguen la dirección de los pies."},{name:"Prensa",sets:"5 × 12-10-8-6-6",muscles:"Cuádriceps · Glúteo",tip:"Pies altos y separados para más glúteo. No despegues la espalda."},{name:"Patada de glúteo en polea",sets:"4 × 12-10-8-6",muscles:"Glúteo mayor",tip:"Espalda recta, agárrate al soporte. Extiende la pierna atrás apretando el glúteo arriba."},{name:"Extensiones de cuádriceps",sets:"4 × 12-10-8-6",muscles:"Cuádriceps",tip:"Aislamiento final. Contrae fuerte arriba, baja controlado."},{name:"Femoral sentado en máquina",sets:"4 × 12-10-8-6",muscles:"Isquiotibiales",tip:"Baja controlado 3 segundos. No uses impulso."}]},{id:1,label:"DÍA 2",title:"💪 Espalda · Hombros",color:"#4A7CE8",icon:"💪",notes:"Última serie: llega al fallo y haz 2 descendentes (-20% peso). Descanso: 1 min entre series, 2-3 min entre ejercicios.",cardio:"10 min de cinta a paso rápido o elíptica.",exercises:[{name:"Deltoides y Tríceps en máquina",sets:"5 × 12-10-8-6-6",muscles:"Deltoides · Tríceps",tip:"Ajusta el asiento para que los codos queden a la altura de los hombros.",video:"https://youtube.com/shorts/9EBmwjZ_7wk"},{name:"Jalón tras nuca",sets:"4 × 12-10-8-6",muscles:"Dorsal · Bíceps",tip:"Barra detrás de la cabeza a altura de orejas. Codos hacia abajo.",video:"https://youtu.be/pOmyhD7qb7E"},{name:"Remo en polea baja agarre amplio",sets:"4 × 12-10-8-6",muscles:"Dorsal · Trapecio",tip:"Saca pecho al tirar. Escápulas juntas en el punto final.",video:"https://youtube.com/shorts/iyOM6y5ADAQ"},{name:"Abs crunch en máquina",sets:"4 × máx",muscles:"Abdomen",tip:"Redondea la espalda al bajar. No uses impulso, contrae el abdomen en cada rep."},{name:"Hiperextensiones",sets:"4 × 12-10-8-6",muscles:"Lumbares · Glúteo",tip:"Sube hasta neutral, no hiperextiendas la columna.",video:"https://youtube.com/shorts/Hn5UVCdUHzQ"},{name:"Vuelos laterales mancuerna banco inclinado",sets:"4 × 12-10-8-6",muscles:"Deltoides lateral",tip:"Banco a 30°. Codos ligeramente doblados. Sube a la altura del hombro.",video:"https://youtube.com/shorts/UFcaodmbXd8"},{name:"Levantamiento de piernas (abs)",sets:"4 × máx",muscles:"Abdomen · Core",tip:"Tumbada o en barra. Piernas juntas, sube lento y baja sin dejar caer."}]},{id:2,label:"DÍA 3",title:"🍑 Piernas · Glúteos",color:"#48B87A",icon:"🍑",notes:"Segunda sesión de piernas/glúteos. Última serie al fallo con 2 descendentes. Descanso: 1 min entre series, 2-3 min entre ejercicios.",cardio:"10 min de stepper. Activa glúteo incluso en el cardio.",exercises:[{name:"Hip Thrust",sets:"5 × 12-10-8-6-6",muscles:"Glúteo mayor",tip:"Busca más peso que el día 1. Aprieta glúteo arriba 1 segundo."},{name:"Peso muerto rumano",sets:"4 × 12-10-8-6",muscles:"Isquiotibiales · Glúteo",tip:"Espalda recta, baja sintiendo el estiramiento en los isquios."},{name:"Prensa",sets:"4 × 12-10-8-6",muscles:"Cuádriceps · Glúteo",tip:"Varía posición de pies respecto al día 1 para diferente estímulo."},{name:"Gemelos en máquina",sets:"4 × 12-10-8-6",muscles:"Gemelos · Sóleo",tip:"Rango completo. Baja hasta sentir el estiramiento, sube de puntillas."},{name:"Abductores en máquina",sets:"4 × 12-10-8-6",muscles:"Glúteo medio · Abductores",tip:"Abre lento y cierra controlado. Siente el glúteo medio en cada rep."},{name:"Sentadilla Búlgara",sets:"4 × 12-10-8-6",muscles:"Glúteo · Cuádriceps",tip:"Pie trasero elevado. Paso largo para más glúteo. Rodilla trasera casi toca el suelo."},{name:"Patada de glúteo en polea",sets:"4 × 12-10-8-6",muscles:"Glúteo mayor",tip:"Aislamiento final. Extiende bien la cadera arriba y aprieta 1 segundo."}]},{id:3,label:"DÍA 4",title:"🔥 Pecho · Bíceps · Tríceps · Core",color:"#C84EC6",icon:"🔥",notes:"Última serie: llega al fallo y haz 2 descendentes (-20% peso). Descanso: 1 min entre series, 2-3 min entre ejercicios.",cardio:"10 min de bicicleta estática a ritmo suave para bajar pulsaciones.",exercises:[{name:"Fondos entre bancos",sets:"4 × 12-10-8-6",muscles:"Tríceps · Pectoral",tip:"Baja hasta que los codos estén a 90°. No bajes demasiado.",video:"https://youtube.com/shorts/YUI84YIRHDo"},{name:"Curl bíceps alterno con mancuernas",sets:"4 × 12-10-8-6",muscles:"Bíceps braquial",tip:"Alterna brazos. Codos fijos en las caderas. Rota la muñeca al subir.",video:"https://www.youtube.com/shorts/e9nzjkmPRXY"},{name:"Tríceps tras nuca",sets:"4 × 12-10-8-6",muscles:"Tríceps",tip:"Codos apuntando al techo. Baja lento detrás de la cabeza. Core apretado.",video:"https://www.youtube.com/shorts/mCqFdXP8xJA"},{name:"Abs crunch en máquina",sets:"4 × máx",muscles:"Abdomen",tip:"Redondea la espalda al bajar. Contrae el abdomen en cada rep, sin impulso."},{name:"Curl bíceps con barra",sets:"4 × 12-10-8-6",muscles:"Bíceps braquial",tip:"Codos pegados al cuerpo. Sube controlado, baja lento en 3 segundos.",video:"https://www.youtube.com/shorts/ll0bUuWH7Ac"},{name:"Elevaciones de piernas (abs)",sets:"4 × máx",muscles:"Abdomen · Core",tip:"Tumbada o en barra. Piernas juntas, sube lento y baja sin dejar caer."},{name:"Aperturas en máquina (pecho)",sets:"4 × 12-10-8-6",muscles:"Pectoral",tip:"Junta las manos delante del pecho. Siente el estiramiento en la apertura.",video:"https://www.youtube.com/shorts/-PNgCrCPcPM"}]}];
+const MUSCLE_COLORS={"Glúteo mayor":"#E8624A","Glúteo med.":"#F0884A","Glúteo":"#E8624A","Glúteo medio":"#F0884A","Cuádriceps":"#4A7CE8","Isquiotibiales":"#7B5EA7","Aductores":"#E84A8A","Abductores":"#E84A8A","Dorsal":"#4A9BE8","Trapecio":"#4AB8E8","Deltoides":"#48B87A","Deltoides lateral":"#48B87A","Tríceps":"#9B4EC8","Pectoral":"#E8A44A","Bíceps braquial":"#C84EC6","Lumbares":"#E8624A","Core":"#48B87A","Abdomen":"#48B87A","Gemelos":"#4AB8E8","Sóleo":"#4A9BE8"};
+function parseSets(str){if(str.includes("máx"))return Array(4).fill({reps:"máx"});const[countStr,repsStr]=str.split("×").map(s=>s.trim());const count=parseInt(countStr);const repsList=repsStr.split("-");return Array.from({length:count},(_,i)=>({reps:repsList[i]||repsList[repsList.length-1]}));}
+function loadData(){try{return JSON.parse(localStorage.getItem("gymlog_v2")||"{}");}catch(e){return{};}}
+function saveData(data){localStorage.setItem("gymlog_v2",JSON.stringify(data));}
+let state={activeDay:0,expanded:null,data:loadData()};
+function getKey(dayId,exIdx,type,serieIdx){if(type==="weight")return`d${dayId}_e${exIdx}_s${serieIdx}_w`;if(type==="note")return`d${dayId}_e${exIdx}_n`;if(type==="done")return`d${dayId}_e${exIdx}_done`;}
+function render(){const day=DAYS[state.activeDay];const color=day.color;document.getElementById("dayTitle").textContent=day.title;document.getElementById("dayTitle").style.backgroundImage=`linear-gradient(135deg, ${color}, #F0EDE8)`;document.getElementById("dayTitle").style.webkitBackgroundClip="text";document.getElementById("dayTitle").style.webkitTextFillColor="transparent";const sel=document.getElementById("daySelector");sel.innerHTML=DAYS.map((d,i)=>`<button class="day-btn ${i===state.activeDay?'active':''}" style="${i===state.activeDay?`background:${d.color};box-shadow:0 3px 14px ${d.color}44`:''}" onclick="selectDay(${i})"><div class="icon">${d.icon}</div><div class="lbl">${d.label}</div></button>`).join("");const total=day.exercises.length;const done=day.exercises.filter((_,i)=>state.data[getKey(day.id,i,"done")]).length;document.getElementById("progressText").textContent=`${done}/${total}`;document.getElementById("progressText").style.color=color;document.getElementById("progressFill").style.width=`${(done/total)*100}%`;document.getElementById("progressFill").style.background=color;const nb=document.getElementById("notesBanner");nb.textContent=day.notes;nb.style.borderLeftColor=color;const list=document.getElementById("exList");list.innerHTML=day.exercises.map((ex,i)=>{const isDone=!!state.data[getKey(day.id,i,"done")];const isOpen=state.expanded===i;const series=parseSets(ex.sets);const note=state.data[getKey(day.id,i,"note")]||"";const muscleTags=ex.muscles.split(" · ").map(m=>{const mc=MUSCLE_COLORS[m]||color;return`<span class="muscle-tag" style="background:${mc}18;color:${mc};border-color:${mc}2A">${m}</span>`;}).join("");const seriesBoxes=series.map((s,si)=>{const w=state.data[getKey(day.id,i,"weight",si)]||"";return`<div class="serie-box" style="${w?`border-color:${color}55`:''}"><div class="serie-num">Serie ${si+1}</div><div class="serie-reps" style="color:${color}">${s.reps==="máx"?"máx. reps":s.reps+" reps"}</div><input class="serie-input" placeholder="peso" value="${w}" oninput="updateWeight(${i},${si},this.value)" onclick="event.stopPropagation()"></div>`;}).join("");const videoHtml=ex.video?`<a href="${ex.video}" target="_blank" class="video-link" style="border-color:${color}30;color:${color}">▶ Ver vídeo de técnica</a>`:"";return`<div class="ex-card ${isDone?'done':''}" style="${isDone?`border-color:${color}44`:''}"><div class="ex-row" onclick="toggleExpand(${i})"><div class="ex-num ${isDone?'done':''}" style="${isDone?`background:${color}`:''}" onclick="event.stopPropagation();toggleDone(${i})">${isDone?"✓":i+1}</div><div class="ex-info"><div class="ex-name ${isDone?'done':''}">${ex.name}</div><div class="ex-sets" style="color:${color}">${ex.sets}</div></div><div class="ex-arrow ${isOpen?'open':''}">▼</div></div><div class="ex-detail ${isOpen?'open':''}"><div class="muscle-tags">${muscleTags}</div><div class="tip-box">💡 ${ex.tip}</div>${videoHtml}<div class="series-label">SERIES</div><div class="series-grid">${seriesBoxes}</div><textarea class="note-input" rows="2" placeholder="📝 Notas (sensaciones, qué mejorar...)" style="${note?`border-color:${color}55`:''}" oninput="updateNote(${i},this.value)" onclick="event.stopPropagation()">${note}</textarea></div></div>`;}).join("")+`<div class="cardio-box" style="border-left-color:${color}"><span>🏃‍♀️</span><div><div class="cardio-label" style="color:${color}">CARDIO FINAL</div><div class="cardio-text">${day.cardio}</div></div></div>`;const comp=document.getElementById("completion");if(done===total){comp.style.display="block";comp.style.background=`linear-gradient(135deg, ${color}, ${color}BB)`;comp.style.boxShadow=`0 6px 24px ${color}55`;}else{comp.style.display="none";}}
+function selectDay(i){state.activeDay=i;state.expanded=null;render();}
+function toggleExpand(i){state.expanded=state.expanded===i?null:i;render();}
+function toggleDone(i){const day=DAYS[state.activeDay];const key=getKey(day.id,i,"done");state.data[key]=!state.data[key];saveData(state.data);render();}
+function updateWeight(exIdx,serieIdx,val){const day=DAYS[state.activeDay];state.data[getKey(day.id,exIdx,"weight",serieIdx)]=val;saveData(state.data);}
+function updateNote(exIdx,val){const day=DAYS[state.activeDay];state.data[getKey(day.id,exIdx,"note")]=val;saveData(state.data);}
+render();
+</script>
+</body>
+</html>
